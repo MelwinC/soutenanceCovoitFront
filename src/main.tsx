@@ -2,19 +2,24 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
-import "./main.css";
+// import "./main.css";
 import HomePage from "./pages/HomePage.tsx";
+import AuthTest from "./tests/AuthTest.tsx";
+import RoleTest from "./tests/RolesTest.tsx";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <HomePage />,
   },
-  // example of adding a new route
-  // {
-  //   path: "/example",
-  //   element: <ExamplePage />,
-  // },
+  {
+    path: "/test/auth",
+    element: <AuthTest />,
+  },
+  {
+    path: "/test/roles",
+    element: <RoleTest />,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")!).render(

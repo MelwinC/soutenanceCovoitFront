@@ -1,11 +1,12 @@
-import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+
+import { Button } from "@/components/ui/button";
 
 const HomePage = () => {
   return (
     <>
       <Button>
-        <Link to="/">Test</Link>
+        <Link to="/test">To TestPage</Link>
       </Button>
     </>
   );
