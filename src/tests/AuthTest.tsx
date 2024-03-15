@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
+import { loginAdmin, loginCompte, loginPersonne } from "@/services/apiAuth";
 import { Compte } from "@/types/compte";
-import { loginCompte, loginPersonne, loginAdmin } from "@/services/apiAuth";
 
 const AuthTest = () => {
   const [dataCompte, setDataCompte] = useState<Compte | undefined>(undefined);
