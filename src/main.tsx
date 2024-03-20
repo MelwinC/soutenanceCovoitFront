@@ -2,31 +2,22 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
+import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import AuthPage from "./pages/AuthPage.tsx";
 import HomePage from "./pages/HomePage.tsx";
-import AuthTest from "./tests/AuthTest.tsx";
-import RoleTest from "./tests/RolesTest.tsx";
 
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: <HomePage />,
+    path: "*",
+    element: (
+      <ProtectedRoute>
+        <HomePage />
+      </ProtectedRoute>
+    ),
   },
   {
     path: "/auth",
     element: <AuthPage />,
-  },
-  {
-    path: "/test/auth",
-    element: <AuthTest />,
-  },
-  {
-    path: "/test/roles",
-    element: <RoleTest />,
-  },
-  {
-    path: "*",
-    element: <HomePage />,
   },
 ]);
 

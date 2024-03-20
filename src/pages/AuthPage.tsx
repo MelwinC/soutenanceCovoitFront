@@ -1,9 +1,10 @@
-import { Input } from "@/components/input";
-import { Button } from "@/components/ui/button";
-import { signIn, signUp } from "@/services/apiAuth";
-import { isLoggedIn, setToken } from "@/services/authService";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+
+import { Input } from "@/components/Input";
+import { Button } from "@/components/ui/button";
+import { signIn, signUp } from "@/services/apiAuth";
+import { isLoggedIn, setCookie } from "@/services/authService";
 
 const AuthPage = () => {
   const [pseudo, setPseudo] = useState("");
@@ -23,8 +24,9 @@ const AuthPage = () => {
   const login = useCallback(async () => {
     try {
       const compte = await signIn({ pseudo, password });
-      if (compte.accessToken) {
-        setToken(compte.accessToken);
+      if (compte.accessToken && compte.roles) {
+        setCookie("token", compte.accessToken);
+        setCookie("roles", compte.roles.join(","));
         navigate("/");
       } else {
         setError("Login ou mot de passe incorrect");
