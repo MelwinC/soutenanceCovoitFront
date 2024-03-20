@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { Input } from "@/components/Input";
+import { Input } from "@/components/input";
 import { Button } from "@/components/ui/button";
 import { signIn, signUp } from "@/services/apiAuth";
 import { isLoggedIn, setCookie } from "@/services/authService";
