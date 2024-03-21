@@ -4,8 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/input";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
+import { capitalize } from "@/lib/utils";
 import { signIn, signUp } from "@/services/apiAuth";
+import { getPersonne } from "@/services/apiPersonne";
 import { isLoggedIn, setCookie } from "@/services/authService";
+import { Compte } from "@/types/compte";
 import { CheckCircle } from "lucide-react";
 
 const AuthPage = () => {
@@ -14,6 +17,7 @@ const AuthPage = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [variant, setVariant] = useState("login");
+  const [compte, setCompte] = useState<Compte | null>(null);
 
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -26,18 +30,21 @@ const AuthPage = () => {
 
   const login = useCallback(async () => {
     try {
-      const compte = await signIn({ pseudo, password });
-      if (compte.accessToken && compte.roles) {
-        setCookie("token", compte.accessToken);
-        setCookie("roles", compte.roles.join(","));
-        navigate("/");
+      if (!pseudo || !password) {
+        setError("Veuillez remplir tous les champs !");
       } else {
-        setError("Login ou mot de passe incorrect");
+        const response = await signIn({ pseudo, password });
+        if ("message" in response) {
+          setError("Login ou mot de passe incorrect");
+        } else {
+          setCompte(response);
+        }
+        console.log(response);
       }
     } catch (error) {
       console.log("erreur : " + error);
     }
-  }, [pseudo, password, navigate]);
+  }, [pseudo, password]);
 
   const register = useCallback(async () => {
     try {
@@ -77,7 +84,33 @@ const AuthPage = () => {
 
   useEffect(() => {
     if (isLoggedIn()) navigate("/");
-  }, [navigate]);
+    if (compte != null) {
+      const authentified = async () => {
+        if (compte.accessToken && compte.roles) {
+          setCookie("token", compte.accessToken);
+          setCookie("roles", compte.roles.join(","));
+          const response = await getPersonne();
+          if ("personne" in response) {
+            toast({
+              description: (
+                <span className="flex">
+                  <CheckCircle style={{ color: "green" }} />
+                  <p className="pl-4 text-[1rem]">
+                    Connexion réussie, bienvenue{" "}
+                    {capitalize(response.personne.prenom)} !
+                  </p>
+                </span>
+              ),
+              duration: 2000,
+              variant: "success",
+            });
+            navigate("/");
+          }
+        }
+      };
+      authentified();
+    }
+  }, [compte, navigate, toast]);
 
   useEffect(() => {
     setError(null);

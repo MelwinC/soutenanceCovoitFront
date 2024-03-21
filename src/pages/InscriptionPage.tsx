@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "@/components/ui/use-toast";
+import { capitalize } from "@/lib/utils";
 import { insertPersonne } from "@/services/apiPersonne";
 import { listeVille } from "@/services/apiVille";
 import { getIdCompte, isLoggedIn, isPersonne } from "@/services/authService";
@@ -50,12 +51,11 @@ const InscriptionPage = () => {
             <span className="flex">
               <CheckCircle style={{ color: "green" }} />
               <p className="pl-4 text-[1rem]">
-                Inscription réussie, bienvenue{" "}
-                {prenom.charAt(0).toUpperCase() + prenom.slice(1)} !
+                Inscription réussie, bienvenue {capitalize(prenom)} !
               </p>
             </span>
           ),
-          duration: 1000,
+          duration: 2000,
           variant: "success",
         });
         navigate("/");

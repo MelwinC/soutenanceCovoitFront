@@ -8,7 +8,7 @@ export async function signIn({
 }: {
   pseudo: string;
   password: string;
-}): Promise<Compte> {
+}): Promise<Compte | { message: string }> {
   const login = pseudo;
   const response = await fetch(API_URL + "login", {
     method: "POST",
@@ -17,7 +17,7 @@ export async function signIn({
     },
     body: JSON.stringify({ login, password }),
   });
-  const compteData: Compte = await response.json();
+  const compteData = await response.json();
   return compteData;
 }
 

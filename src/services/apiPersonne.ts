@@ -25,7 +25,7 @@ export async function insertPersonne({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-access-token": token!,
+        "x-access-token": token,
       },
       body: JSON.stringify({ prenom, nom, tel, email, id_compte, id_ville }),
     });
@@ -46,12 +46,29 @@ export async function selectPersonne({
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-access-token": token!,
+        "x-access-token": token,
       },
       body: JSON.stringify({ id }),
     });
     return await response.json();
   } else {
-    return { message: "NOK" };
+    return { message: "Pas de token disponible" };
+  }
+}
+
+export async function getPersonne(): Promise<
+  { message: string; personne: Personne } | { message: string }
+> {
+  if (token) {
+    const response = await fetch(API_URL + "getPersonne", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": token!,
+      },
+    });
+    return await response.json();
+  } else {
+    return { message: "Pas de token disponible" };
   }
 }
