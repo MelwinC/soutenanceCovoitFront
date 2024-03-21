@@ -1,13 +1,14 @@
 import { ReactNode, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { isLoggedIn } from "@/services/authService";
+import { isLoggedIn, isPersonne } from "@/services/authService";
 
 const ProtectedRoute = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
     if (!isLoggedIn()) navigate("/auth");
+    if (isLoggedIn() && !isPersonne()) navigate("/inscription");
   }, [navigate]);
 
   return <>{children}</>;

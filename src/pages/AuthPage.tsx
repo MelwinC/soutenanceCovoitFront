@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 
 import { Input } from "@/components/input";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
 import { signIn, signUp } from "@/services/apiAuth";
 import { isLoggedIn, setCookie } from "@/services/authService";
+import { CheckCircle } from "lucide-react";
 
 const AuthPage = () => {
   const [pseudo, setPseudo] = useState("");
@@ -14,6 +16,7 @@ const AuthPage = () => {
   const [variant, setVariant] = useState("login");
 
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   const toggleVariant = useCallback(() => {
     setVariant((currentVariant) =>
@@ -54,13 +57,23 @@ const AuthPage = () => {
         } else if (password !== confirmPassword) {
           setError("Les mots de passe ne correspondent pas !");
         } else {
+          toast({
+            description: (
+              <span className="flex">
+                <CheckCircle style={{ color: "green" }} />
+                <p className="pl-4 text-[1rem]">Compte créé avec succès !</p>
+              </span>
+            ),
+            duration: 1000,
+            variant: "success",
+          });
           login();
         }
       }
     } catch (error) {
       console.log("erreur : " + error);
     }
-  }, [pseudo, password, confirmPassword, login]);
+  }, [pseudo, password, confirmPassword, login, toast]);
 
   useEffect(() => {
     if (isLoggedIn()) navigate("/");
@@ -123,7 +136,7 @@ const AuthPage = () => {
               {variant === "login" ? "Se connecter" : "Créer un compte"}
             </Button>
             <div className="flex flex-row items-center gap-4 mt-8 justify-center"></div>
-            <p className="text-neutral-300 mt-12">
+            <p className="text-neutral-300 mt-4">
               {variant === "login"
                 ? "Pas encore de compte ?"
                 : "Vous possédez déjà un compte ?"}

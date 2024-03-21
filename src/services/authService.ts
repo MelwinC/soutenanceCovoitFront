@@ -1,28 +1,31 @@
-const getCookie = (name: string) => {
-  const value = "; " + document.cookie;
-  const parts = value.split("; " + name + "=");
-  if (parts.length === 2) return parts.pop()?.split(";").shift();
-};
+import Cookies from "js-cookie";
 
 export const getToken = () => {
-  return getCookie("token");
+  return Cookies.get("token");
+};
+
+export const getIdCompte = () => {
+  const jwt = getToken()!;
+  const parts = jwt.split(".");
+  const payload = JSON.parse(atob(parts[1]));
+  return payload.id;
 };
 
 export const setCookie = (key: string, value: string) => {
-  document.cookie = `${key}=${value}`;
+  Cookies.set(key, value);
 };
 
 export const removeCookies = () => {
-  document.cookie = "token=;";
-  document.cookie = "roles=;";
+  Cookies.remove("token");
+  Cookies.remove("roles");
 };
 
 export const isLoggedIn = () => {
-  return !!getToken();
+  return isUser();
 };
 
 export const isUser = () => {
-  const roles = getCookie("roles");
+  const roles = Cookies.get("roles");
   if (!roles) {
     return false;
   }
@@ -30,7 +33,7 @@ export const isUser = () => {
 };
 
 export const isAdmin = () => {
-  const roles = getCookie("roles");
+  const roles = Cookies.get("roles");
   if (!roles) {
     return false;
   }
@@ -38,7 +41,7 @@ export const isAdmin = () => {
 };
 
 export const isPersonne = () => {
-  const roles = getCookie("roles");
+  const roles = Cookies.get("roles");
   if (!roles) {
     return false;
   }
