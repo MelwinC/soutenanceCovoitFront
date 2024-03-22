@@ -20,8 +20,8 @@ const Navbar = () => {
 
   return (
     <header className="sticky top-0 w-full z-50 flex items-center bg-ternary-dark/80 h-16 border-b border-secondary-dark shadow-lg">
-      <nav className="flex justify-between items-center h-full w-full px-12">
-        <div>
+      <nav className="flex justify-between items-center h-full w-full">
+        <div className="flex-1 text-center">
           <Link to="/" className="text-white">
             <Button
               variant={"navbarLogo"}
@@ -32,7 +32,7 @@ const Navbar = () => {
             </Button>
           </Link>
         </div>
-        <div>
+        <div className="flex-auto text-center">
           <Link to="/" className="text-white">
             <Button variant={"navbarItem"}>
               <Search />
@@ -52,7 +52,7 @@ const Navbar = () => {
             </Button>
           </Link>
         </div>
-        <div className="flex">
+        <div className="flex flex-1 justify-center">
           <UserCircle2 className="text-primary-light/60 hover:text-primary-light/90 hover:cursor-pointer mr-4" />
           <LogOut
             className="text-primary-light/60 hover:text-primary-light/90 hover:cursor-pointer"
