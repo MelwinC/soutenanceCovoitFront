@@ -7,9 +7,9 @@ import { useToast } from "@/components/ui/use-toast";
 import { capitalize } from "@/lib/utils";
 import { signIn, signUp } from "@/services/apiAuth";
 import { getPersonne } from "@/services/apiPersonne";
-import { isLoggedIn, setCookie } from "@/services/authService";
+import { isLoggedIn, isPersonne, setCookie } from "@/services/authService";
 import { Compte } from "@/types/compte";
-import { CheckCircle } from "lucide-react";
+import { Car, CheckCircle } from "lucide-react";
 
 const AuthPage = () => {
   const [pseudo, setPseudo] = useState("");
@@ -39,7 +39,6 @@ const AuthPage = () => {
         } else {
           setCompte(response);
         }
-        console.log(response);
       }
     } catch (error) {
       console.log("erreur : " + error);
@@ -66,7 +65,7 @@ const AuthPage = () => {
         } else {
           toast({
             description: (
-              <span className="flex">
+              <span className="flex items-center">
                 <CheckCircle style={{ color: "green" }} />
                 <p className="pl-4 text-[1rem]">Compte créé avec succès !</p>
               </span>
@@ -83,28 +82,32 @@ const AuthPage = () => {
   }, [pseudo, password, confirmPassword, login, toast]);
 
   useEffect(() => {
-    if (isLoggedIn()) navigate("/");
+    if (isLoggedIn()) return navigate("/");
     if (compte != null) {
       const authentified = async () => {
         if (compte.accessToken && compte.roles) {
           setCookie("token", compte.accessToken);
           setCookie("roles", compte.roles.join(","));
-          const response = await getPersonne();
-          if ("personne" in response) {
-            toast({
-              description: (
-                <span className="flex">
-                  <CheckCircle style={{ color: "green" }} />
-                  <p className="pl-4 text-[1rem]">
-                    Connexion réussie, bienvenue{" "}
-                    {capitalize(response.personne.prenom)} !
-                  </p>
-                </span>
-              ),
-              duration: 2000,
-              variant: "success",
-            });
-            navigate("/");
+          if (isPersonne()) {
+            const response = await getPersonne();
+            if ("personne" in response) {
+              toast({
+                description: (
+                  <span className="flex items-center">
+                    <CheckCircle style={{ color: "green" }} />
+                    <p className="pl-4 text-[1rem]">
+                      Connexion réussie, bienvenue{" "}
+                      {capitalize(response.personne.prenom)} !
+                    </p>
+                  </span>
+                ),
+                duration: 2000,
+                variant: "success",
+              });
+              return navigate("/");
+            }
+          } else {
+            navigate("/inscription");
           }
         }
       };
@@ -117,11 +120,19 @@ const AuthPage = () => {
   }, [pseudo, password, confirmPassword]);
 
   return (
-    <div className="flex justify-center items-center bg-neutral-200 w-full h-full">
+    <div className="flex justify-center items-center bg-primary-dark w-full h-full">
       <div className="flex justify-center w-full h-full">
         <div className="bg-ternary-dark px-16 py-16 self-center mt-2 min-w-min max-w-2xl rounded-lg w-4/5">
+          <div className="md:flex-1 text-center hidden md:block mb-8">
+            <Button variant={"navbarLogo"} className="hover:cursor-default">
+              <Car className="h-12 w-12" />
+              <p className="pl-2 text-[2rem]">
+                <span className="text-indigo-400">Covoit</span>urage
+              </p>
+            </Button>
+          </div>
           <h2 className="text-white text-4xl mb-8 font-semibold">
-            {variant === "login" ? "Connexion" : "Inscription"}
+            {variant === "login" ? "Connexion" : "Créer un compte"}
           </h2>
           <form
             onSubmit={(e) => {
@@ -129,7 +140,7 @@ const AuthPage = () => {
               variant === "login" ? login() : register();
             }}
           >
-            {error && <div className="text-red-600 mb-4">{error}</div>}
+            {error && <div className="text-red-500 mb-4">{error}</div>}
             <div className="flex flex-col gap-4">
               <Input
                 label="Pseudo"
@@ -164,7 +175,7 @@ const AuthPage = () => {
             <Button
               type="submit"
               variant="dark"
-              className="w-full mt-10 active:bg-neutral-700 active:duration-300"
+              className="text-lg w-full mt-10 active:bg-neutral-700 active:duration-300 py-6"
             >
               {variant === "login" ? "Se connecter" : "Créer un compte"}
             </Button>
@@ -175,9 +186,9 @@ const AuthPage = () => {
                 : "Vous possédez déjà un compte ?"}
               <span
                 onClick={toggleVariant}
-                className="text-primary-light ml-1 hover:underline cursor-pointer"
+                className="text-indigo-400 ml-1 hover:underline cursor-pointer font-semibold"
               >
-                {variant === "login" ? "Créer un compte" : "Se connecter"}
+                {variant === "login" ? "Inscrivez-vous" : "Connectez-vous"}
               </span>
             </p>
           </form>

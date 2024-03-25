@@ -19,41 +19,54 @@ const Navbar = () => {
   };
 
   return (
-    <header className="sticky top-0 w-full z-50 flex items-center bg-ternary-dark/80 h-16 border-b border-secondary-dark shadow-lg">
-      <nav className="flex justify-between items-center h-full w-full">
-        <div className="flex-1 text-center">
-          <Link to="/" className="text-white">
-            <Button
-              variant={"navbarLogo"}
-              className="text-xl text-primary-light/90"
-            >
+    <header className="md:top-0 w-full z-50 flex items-center bg-ternary-dark h-16 md:border-b md:bg-secondary-dark/95 border-t border-secondary-dark md:shadow-lg fixed bottom-0">
+      <nav className="flex md:justify-between items-center h-full w-full">
+        <div className="md:flex-1 text-right hidden md:block">
+          <Link to="/">
+            <Button variant={"navbarLogo"}>
               <Car />
-              <p className="pl-2">Covoiturage</p>
+              <p className="pl-2 text-[1.2rem]">
+                <span className="text-indigo-400">Covoit</span>urage
+              </p>
             </Button>
           </Link>
         </div>
-        <div className="flex-auto text-center">
-          <Link to="/" className="text-white">
-            <Button variant={"navbarItem"}>
+        <div className="md:flex-[3] md:text-center w-full flex md:justify-center justify-evenly">
+          <Link to="/" className="md:pr-6">
+            <Button variant={"navbarItem"} className="p-0 md:px-2">
               <Search />
-              <p className="pl-2">Rechercher un trajet</p>
+              <p className="md:block pl-2 text-[0.8rem] hidden">
+                Rechercher un trajet
+              </p>
+              <p className="md:pl-2 text-[0.8rem] md:hidden p-0">Rechercher</p>
             </Button>
           </Link>
-          <Link to="/" className="text-white">
-            <Button variant={"navbarItem"}>
+          <Link to="/trajets" className="md:pr-6">
+            <Button variant={"navbarItem"} className="p-0 md:px-2">
               <CalendarDays />
-              <p className="pl-2">Mes trajets</p>
+              <p className="md:pl-2 text-[0.8rem] p-0">Mes trajets</p>
             </Button>
           </Link>
-          <Link to="/" className="text-white">
-            <Button variant={"navbarItem"}>
+          <Link to="/publier">
+            <Button variant={"navbarItem"} className="p-0 md:px-2">
               <PlusCircle />
-              <p className="pl-2">Publier un trajet</p>
+              <p className="md:block pl-2 text-[0.8rem] hidden">
+                Publier un trajet
+              </p>
+              <p className="md:pl-2 text-[0.8rem] md:hidden p-0">Publier</p>
+            </Button>
+          </Link>
+          <Link to="/compte" className="text-white md:hidden">
+            <Button variant={"navbarItem"} className="p-0 md:px-2">
+              <UserCircle2 />
+              <p className="p-0 text-[0.8rem]">Mon compte</p>
             </Button>
           </Link>
         </div>
-        <div className="flex flex-1 justify-center">
-          <UserCircle2 className="text-primary-light/60 hover:text-primary-light/90 hover:cursor-pointer mr-4" />
+        <div className="md:flex md:flex-[0.8] md:justify-start hidden">
+          <Link to="/compte">
+            <UserCircle2 className="text-primary-light/60 hover:text-primary-light/90 hover:cursor-pointer mr-4" />
+          </Link>
           <LogOut
             className="text-primary-light/60 hover:text-primary-light/90 hover:cursor-pointer"
             onClick={logout}
