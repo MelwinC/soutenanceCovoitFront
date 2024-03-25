@@ -195,24 +195,24 @@ const ComptePage = () => {
               </>
             )}
           </div>
+          <Button
+            type="submit"
+            variant="dark"
+            className="text-lg w-full mt-10 active:bg-neutral-700 active:duration-300 py-6"
+            onClick={() => updateProfile()}
+          >
+            Modifier
+          </Button>
           {variant === "passager" && (
             <Button
               type="submit"
               variant="dark"
-              className="text-lg w-full mt-8 active:bg-neutral-700 active:duration-300 py-6"
+              className="text-lg w-full mt-4 active:bg-neutral-700 active:duration-300 py-6"
               onClick={() => setVariant("conducteur")}
             >
               Ajouter une voiture
             </Button>
           )}
-          <Button
-            type="submit"
-            variant="dark"
-            className="text-lg w-full mt-4 active:bg-neutral-700 active:duration-300 py-6"
-            onClick={() => updateProfile()}
-          >
-            Modifier
-          </Button>
           <Button
             variant={"dark"}
             className="bg-red-600 hover:bg-red-800 text-lg w-full mt-4 active:bg-neutral-700 active:duration-300 py-6 md:hidden flex"
