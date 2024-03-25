@@ -2,18 +2,23 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
+import Navbar from "./components/navbar.tsx";
 import ProtectedRoute from "./components/ProtectedRoute.tsx";
 import { Toaster } from "./components/ui/toaster.tsx";
 import AuthPage from "./pages/AuthPage.tsx";
-import HomePage from "./pages/HomePage.tsx";
-import InscriptionPage from "./pages/InscriptionPage.tsx";
+import ComptePage from "./pages/ComptePage.tsx";
+import InsertPersonnePage from "./pages/InsertPersonnePage.tsx";
+import PublierPage from "./pages/PublierPage.tsx";
+import RecherchePage from "./pages/RecherchePage.tsx";
+import TrajetsPage from "./pages/TrajetsPage.tsx";
 
 const router = createBrowserRouter([
   {
     path: "*",
     element: (
       <ProtectedRoute>
-        <HomePage />
+        <Navbar />
+        <RecherchePage />
       </ProtectedRoute>
     ),
   },
@@ -23,7 +28,34 @@ const router = createBrowserRouter([
   },
   {
     path: "/inscription",
-    element: <InscriptionPage />,
+    element: <InsertPersonnePage />,
+  },
+  {
+    path: "/trajets",
+    element: (
+      <ProtectedRoute>
+        <Navbar />
+        <TrajetsPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/publier",
+    element: (
+      <ProtectedRoute>
+        <Navbar />
+        <PublierPage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/compte",
+    element: (
+      <ProtectedRoute>
+        <Navbar />
+        <ComptePage />
+      </ProtectedRoute>
+    ),
   },
 ]);
 
