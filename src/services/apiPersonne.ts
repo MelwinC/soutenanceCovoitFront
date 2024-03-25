@@ -90,3 +90,32 @@ export async function getProfile(): Promise<
   });
   return await response.json();
 }
+
+export async function updatePersonne({
+  prenom,
+  nom,
+  tel,
+  email,
+  id_marque,
+  modele,
+  place,
+}: {
+  prenom: string;
+  nom: string;
+  tel: string;
+  email: string;
+  id_marque?: number;
+  modele?: string;
+  place?: number;
+}): Promise<{ message: string }> {
+  const token = getToken()!;
+  const response = await fetch(API_URL + "updatePersonne", {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+      "x-access-token": token,
+    },
+    body: JSON.stringify({ prenom, nom, tel, email, id_marque, modele, place }),
+  });
+  return await response.json();
+}
