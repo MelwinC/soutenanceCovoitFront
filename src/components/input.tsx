@@ -6,6 +6,7 @@ interface InputProps {
   value: string;
   label: string;
   type?: string;
+  min?: string;
 }
 
 export const Input: React.FC<InputProps> = ({
@@ -14,6 +15,7 @@ export const Input: React.FC<InputProps> = ({
   value,
   label,
   type,
+  min,
 }) => {
   return (
     <div className="relative">
@@ -22,6 +24,7 @@ export const Input: React.FC<InputProps> = ({
         type={type}
         value={value}
         id={id}
+        min={min}
         className="
       block
       rounded-md
