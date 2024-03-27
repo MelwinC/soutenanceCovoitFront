@@ -11,9 +11,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "@/components/ui/use-toast";
 import { listeMarque } from "@/services/apiMarque";
-import { getProfile, updatePersonne } from "@/services/apiPersonne";
+import {
+  deleteVoiture,
+  getProfile,
+  updatePersonne,
+} from "@/services/apiPersonne";
 import { Marque } from "@/types/marque";
+import { CheckCircle } from "lucide-react";
 
 const ComptePage = () => {
   const [prenom, setPrenom] = useState<string>("");
@@ -26,6 +32,7 @@ const ComptePage = () => {
   const [marques, setMarques] = useState<Marque[]>();
   const [error, setError] = useState<string | null>(null);
   const [variant, setVariant] = useState("passager");
+  const [idVoiture, setIdVoiture] = useState<number | null>(null);
 
   const marqueUser = marques?.find((marque) => marque.id === idMarque);
 
@@ -42,7 +49,7 @@ const ComptePage = () => {
       ) {
         setError("Veuillez remplir tous les champs !");
       } else {
-        await updatePersonne({
+        const response = await updatePersonne({
           prenom,
           nom,
           tel,
@@ -51,6 +58,23 @@ const ComptePage = () => {
           modele,
           place: nbPlaces,
         });
+        if (response.message === "OK") {
+          toast({
+            description: (
+              <span className="flex items-center">
+                <CheckCircle style={{ color: "green" }} />
+                <p className="pl-4 text-[1rem]">
+                  Votre profil a bien été mis à jour !
+                </p>
+              </span>
+            ),
+            duration: 3000,
+            variant: "success",
+          });
+          fetchProfil();
+        } else {
+          setError("Erreur lors de la mise à jour du profil");
+        }
       }
     } else {
       if (!prenom || !nom || !tel || !email) {
@@ -66,27 +90,56 @@ const ComptePage = () => {
     }
   }, [prenom, nom, tel, email, modele, idMarque, variant, nbPlaces]);
 
+  const removeCar = async () => {
+    setVariant("passager");
+    if (!idVoiture) {
+      setError("Vous n'avez pas encore enregistré de voiture !");
+      return;
+    }
+    const response = await deleteVoiture(idVoiture);
+    if (response.message === "OK") {
+      toast({
+        description: (
+          <span className="flex items-center">
+            <CheckCircle style={{ color: "green" }} />
+            <p className="pl-4 text-[1rem]">
+              Votre voiture et vos trajets (conducteur) ont bien été supprimés !
+            </p>
+          </span>
+        ),
+        duration: 3000,
+        variant: "success",
+      });
+      setIdVoiture(null);
+      setModele("");
+      setIdMarque(null);
+    } else {
+      setError("Erreur lors de la suppression de la voiture");
+    }
+  };
+
   useEffect(() => {
     setError(null);
   }, [prenom, nom, tel, email, modele, idMarque, modele, nbPlaces]);
 
-  useEffect(() => {
-    const fetchProfil = async () => {
-      const response = await getProfile();
-      if ("voiture" in response) {
-        setVariant("conducteur");
-        if (response.voiture) {
-          setModele(response.voiture.modele);
-          setNbPlaces(response.voiture.place);
-          setIdMarque(response.marque.id);
-        }
+  const fetchProfil = async () => {
+    const response = await getProfile();
+    if ("voiture" in response) {
+      setVariant("conducteur");
+      if (response.voiture) {
+        setModele(response.voiture.modele);
+        setNbPlaces(response.voiture.place);
+        setIdMarque(response.marque.id);
+        setIdVoiture(response.voiture.id);
       }
-      setPrenom(response.personne.prenom);
-      setNom(response.personne.nom);
-      setTel(response.personne.tel);
-      setEmail(response.personne.email);
-    };
+    }
+    setPrenom(response.personne.prenom);
+    setNom(response.personne.nom);
+    setTel(response.personne.tel);
+    setEmail(response.personne.email);
+  };
 
+  useEffect(() => {
     const fetchMarques = async () => {
       const response = await listeMarque();
       setMarques(response.marques);
@@ -97,9 +150,9 @@ const ComptePage = () => {
   }, []);
 
   return (
-    <div className="flex justify-center items-center bg-primary-dark w-full h-full">
+    <div className="flex justify-center items-center bg-primary-dark w-full h-full pb-16 md:pb-0 md:pt-16">
       <div className="flex justify-center w-full h-full">
-        <div className="bg-ternary-dark px-12 py-8 self-center min-w-min max-w-2xl rounded-lg w-4/5 mb-16 md:mt-16 md:mb-0">
+        <div className="bg-ternary-dark px-12 py-8 self-center min-w-min max-w-2xl rounded-lg w-4/5">
           <h2 className="text-white text-4xl mb-8 font-semibold">Mon compte</h2>
           {error && <div className="text-red-500 mb-4">{error}</div>}
           <div className="flex flex-col gap-4">
@@ -198,16 +251,26 @@ const ComptePage = () => {
           <Button
             type="submit"
             variant="dark"
-            className="text-lg w-full mt-10 active:bg-neutral-700 active:duration-300 py-6"
+            className="text-md w-full mt-10 active:bg-neutral-700 active:duration-300 py-4"
             onClick={() => updateProfile()}
           >
             Modifier
           </Button>
+          {variant === "conducteur" && (
+            <Button
+              type="submit"
+              variant="dark"
+              className="text-md w-full mt-4 active:bg-neutral-700 active:duration-300 py-4"
+              onClick={() => removeCar()}
+            >
+              Supprimer ma voiture
+            </Button>
+          )}
           {variant === "passager" && (
             <Button
               type="submit"
               variant="dark"
-              className="text-lg w-full mt-4 active:bg-neutral-700 active:duration-300 py-6"
+              className="text-md w-full mt-4 active:bg-neutral-700 active:duration-300 py-4"
               onClick={() => setVariant("conducteur")}
             >
               Ajouter une voiture
@@ -215,7 +278,7 @@ const ComptePage = () => {
           )}
           <Button
             variant={"dark"}
-            className="bg-red-600 hover:bg-red-800 text-lg w-full mt-4 active:bg-neutral-700 active:duration-300 py-6 md:hidden flex"
+            className="bg-red-600 hover:bg-red-800 text-md w-full mt-4 active:bg-neutral-700 active:duration-300 py-4 md:hidden flex"
           >
             Déconnexion
           </Button>
