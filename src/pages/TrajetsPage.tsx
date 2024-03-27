@@ -14,12 +14,14 @@ const TrajetsPage = () => {
   const [inscriptionsPassager, setInscriptionsPassager] = useState<Trajet[]>(
     []
   );
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchInscriptions = async () => {
       const response = await listeInscription();
-      setInscriptionsConducteur(response.inscriptionsConducteur);
       setInscriptionsPassager(response.inscriptionsPassager);
+      setInscriptionsConducteur(response.inscriptionsConducteur);
+      setIsLoading(false);
     };
     fetchInscriptions();
   }, []);
@@ -42,10 +44,11 @@ const TrajetsPage = () => {
           </TabsTrigger>
         </TabsList>
         <TabsContent value="trajets_passager">
-          <TrajetsPassager inscriptions={inscriptionsPassager} />
+          {isLoading && <p>Chargement...</p>}
+          <TrajetsPassager inscriptionsPassager={inscriptionsPassager} />
         </TabsContent>
         <TabsContent value="trajets_conducteur">
-          <TrajetsConducteur inscriptions={inscriptionsConducteur} />
+          <TrajetsConducteur inscriptionsConducteur={inscriptionsConducteur} />
         </TabsContent>
       </Tabs>
     </div>

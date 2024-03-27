@@ -1,13 +1,31 @@
 import { ArrowRight, Car, Clock, Mail, Phone, User2 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { capitalize } from "@/lib/utils";
+import { deleteInscription } from "@/services/apiInscription";
+import { getPersonne } from "@/services/apiPersonne";
 import { getTrajet } from "@/services/apiTrajet";
 import { getToken } from "@/services/authService";
 import { DetailTrajet, Trajet } from "@/types/trajet";
+import Toast from "./Toast";
+import { Button } from "./ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
 
-const TrajetsPassager = ({ inscriptions }: { inscriptions: Trajet[] }) => {
+const TrajetsPassager = ({
+  inscriptionsPassager,
+}: {
+  inscriptionsPassager: Trajet[];
+}) => {
+  const [inscriptions, setInscriptions] =
+    useState<Trajet[]>(inscriptionsPassager);
   const [currentTrajet, setCurrentTrajet] = useState<DetailTrajet | undefined>(
     undefined
   );
@@ -23,6 +41,32 @@ const TrajetsPassager = ({ inscriptions }: { inscriptions: Trajet[] }) => {
       console.error(response.message);
     }
   };
+
+  const annulerInscription = async (id_trajet: number) => {
+    const personneResponse = await getPersonne();
+    if (!("personne" in personneResponse)) {
+      Toast(
+        false,
+        "Erreur lors de la récupération de vos informations, veuillez réessayer."
+      );
+      return;
+    }
+    const response = await deleteInscription({
+      id_personne: personneResponse.personne.id,
+      id_trajet,
+    });
+    if (response.message === "OK") {
+      Toast(true, "Vous avez bien été désinscrit.");
+      setIsSheetOpen(false);
+      setInscriptions(inscriptions.filter((trajet) => trajet.id !== id_trajet));
+    } else {
+      Toast(false, "Une erreur est survenue lors de votre désinscription.");
+    }
+  };
+
+  useEffect(() => {
+    setInscriptions(inscriptionsPassager);
+  }, [inscriptionsPassager]);
 
   return (
     <>
@@ -45,7 +89,11 @@ const TrajetsPassager = ({ inscriptions }: { inscriptions: Trajet[] }) => {
           >
             <div className="absolute -top-3 right-3 bg-indigo-500 rounded-lg">
               <p className="px-2 py-1 text-[0.78rem]">
-                {trajet.place_dispo} places restantes
+                {trajet.place_dispo === 0
+                  ? "complet"
+                  : trajet.place_dispo === 1
+                  ? " 1 place restante"
+                  : trajet.place_dispo + " places restantes"}
               </p>
             </div>
             <div className="px-4 pt-2 pb-3 flex items-center justify-between font-semibold w-full">
@@ -137,6 +185,30 @@ const TrajetsPassager = ({ inscriptions }: { inscriptions: Trajet[] }) => {
                   <Mail className="text-indigo-400 h-7 w-7 mr-2" />
                   <p>{currentTrajet?.personne.email}</p>
                 </div>
+                <Dialog>
+                  <DialogTrigger>
+                    <Button variant={"delete"}>Me désinscrire</Button>
+                  </DialogTrigger>
+                  <DialogContent className="w-96 bg-ternary-dark text-primary-light border-none">
+                    <DialogHeader>
+                      <DialogTitle>Annuler mon inscription</DialogTitle>
+                      <DialogDescription className="py-4 text-primary-light/60">
+                        Êtes-vous sûr de vouloir vous désinscrire de ce trajet ?
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex justify-end">
+                      <Button className="mr-4" variant={"dark"}>
+                        Annuler
+                      </Button>
+                      <Button
+                        variant={"dark"}
+                        onClick={() => annulerInscription(currentTrajet!.id)}
+                      >
+                        Confirmer
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
             </div>
           </SheetContent>
