@@ -151,8 +151,8 @@ const ComptePage = () => {
 
   return (
     <div className="flex justify-center items-center bg-primary-dark w-full h-full pb-16 md:pb-0 md:pt-16">
-      <div className="flex justify-center w-full h-full">
-        <div className="bg-ternary-dark px-12 py-8 self-center min-w-min max-w-2xl rounded-lg w-4/5">
+      <div className="flex justify-center w-full">
+        <div className="bg-ternary-dark px-8 md:px-12 py-8 self-center min-w-min max-w-2xl rounded-lg w-full md:w-4/5 ">
           <h2 className="text-white text-4xl mb-8 font-semibold">Mon compte</h2>
           {error && <div className="text-red-500 mb-4">{error}</div>}
           <div className="flex flex-col gap-4">
@@ -259,7 +259,7 @@ const ComptePage = () => {
           {variant === "conducteur" && (
             <Button
               type="submit"
-              variant="dark"
+              variant="delete"
               className="text-md w-full mt-4 active:bg-neutral-700 active:duration-300 py-4"
               onClick={() => removeCar()}
             >
