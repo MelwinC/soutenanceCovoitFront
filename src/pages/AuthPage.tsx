@@ -105,8 +105,8 @@ const AuthPage = () => {
   return (
     <div className="flex justify-center items-center bg-primary-dark w-full h-full">
       <div className="flex justify-center w-full h-full">
-        <div className="bg-ternary-dark px-16 py-16 self-center mt-2 min-w-min max-w-2xl rounded-lg w-4/5">
-          <div className="md:flex-1 text-center hidden md:block mb-8">
+        <div className="bg-ternary-dark px-16 py-12 self-center mt-2 min-w-min max-w-2xl rounded-lg w-4/5">
+          <div className="text-center mb-8">
             <Button variant={"navbarLogo"} className="hover:cursor-default">
               <Car className="h-12 w-12" />
               <p className="pl-2 text-[2rem]">
