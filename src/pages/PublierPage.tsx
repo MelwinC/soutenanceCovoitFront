@@ -3,6 +3,7 @@ import { CheckCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import DatePicker from "@/components/DatePicker";
+import { InputTime } from "@/components/InputTime";
 import { Input } from "@/components/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -67,6 +68,12 @@ const PublierPage = () => {
       );
       return;
     }
+    if (profil && profil.voiture) {
+      if (places + 1 > profil.voiture.place) {
+        setError("Votre voiture ne possède pas assez de places !");
+        return;
+      }
+    }
     const response = await insertTrajet({
       id_personne: profil!.personne.id,
       kms: kms,
@@ -112,6 +119,7 @@ const PublierPage = () => {
 
     const fetchVilles = async () => {
       const data = await listeVille();
+      data.villes.sort((a: Ville, b: Ville) => a.ville.localeCompare(b.ville));
       setVilles(data.villes);
     };
 
@@ -121,14 +129,13 @@ const PublierPage = () => {
 
   useEffect(() => {
     setError(null);
-  }, [idVilleDep, idVilleArr, kms, date, time]);
+  }, [idVilleDep, idVilleArr, kms, date, time, places]);
 
   return (
-    <div className="pb-16 md:mt-16 h-full flex items-center justify-center">
+    <div className="pb-16 md:pb-0 md:pt-16 h-full flex items-center justify-center">
       {variant === "passager" ? (
-        <div>
-          Vous ne pouvez pas publier de trajet en tant que passager (aucune
-          voiture enregistrée)
+        <div className="text-lg font-semibold">
+          Vous ne pouvez pas publier de trajet sans voiture.
         </div>
       ) : (
         <div className="flex justify-center items-center bg-primary-dark w-full h-full">
@@ -211,16 +218,16 @@ const PublierPage = () => {
                     }
                     id="places"
                     type="number"
+                    min="1"
                     value={places.toString()}
                   />
                   <DatePicker date={date} setDate={setDate} />
-                  <Input
+                  <InputTime
                     label="Heure de départ"
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setTime(e.target.value)
                     }
                     id="time"
-                    type="time"
                     value={time}
                     min={format(new Date(), "HH:mm")}
                   />

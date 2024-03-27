@@ -86,6 +86,7 @@ const InsertPersonnePage = () => {
     if (isPersonne()) navigate("/");
     const getVilles = async () => {
       const data = await listeVille();
+      data.villes.sort((a: Ville, b: Ville) => a.ville.localeCompare(b.ville));
       setVilles(data.villes);
     };
     getVilles();

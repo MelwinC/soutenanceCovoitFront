@@ -139,9 +139,14 @@ const RecherchePage = () => {
   }, [navigate, isSheetOpen]);
 
   return (
-    <div className="flex flex-col items-center md:mt-16">
+    <div className="flex flex-col items-center pb-16 md:pb-0 md:pt-16">
       {/* filter placeholder */}
       <div className="bg-slate-800 w-4/5 h-32 mt-8 mb-8"></div>
+      {trajets.length === 0 && (
+        <div className="flex justify-center items-center h-full">
+          <p className="text-lg font-semibold">Aucun trajet n'a été trouvé.</p>
+        </div>
+      )}
       {trajets.map((trajet) => (
         <Sheet
           key={trajet.id}
