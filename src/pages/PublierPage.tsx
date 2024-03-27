@@ -2,18 +2,10 @@ import { useEffect, useState } from "react";
 
 import DatePicker from "@/components/DatePicker";
 import { InputTime } from "@/components/InputTime";
+import SelectVille from "@/components/SelectVille";
 import Toast from "@/components/Toast";
 import { Input } from "@/components/input";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { getProfile } from "@/services/apiPersonne";
 import { insertTrajet } from "@/services/apiTrajet";
 import { listeVille } from "@/services/apiVille";
@@ -32,7 +24,7 @@ type Profil = {
 const PublierPage = () => {
   const [variant, setVariant] = useState("passager");
   const [profil, setProfil] = useState<Profil>();
-  const [villes, setVilles] = useState<Ville[]>();
+  const [villes, setVilles] = useState<Ville[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [idVilleDep, setIdVilleDep] = useState(0);
   const [idVilleArr, setIdVilleArr] = useState(0);
@@ -90,7 +82,7 @@ const PublierPage = () => {
   const buildDateTime = () => {
     const [hours, minutes] = time.split(":").map(Number);
     const datetime = new Date(date!);
-    datetime.setHours(hours + 1);
+    datetime.setHours(hours);
     datetime.setMinutes(minutes);
     return datetime;
   };
@@ -142,54 +134,24 @@ const PublierPage = () => {
                 {error && <div className="text-red-600 mb-4">{error}</div>}
                 <div className="flex flex-col gap-4">
                   <div className="flex justify-center">
-                    <Select
+                    <SelectVille
+                      villes={villes}
+                      placeholder="Ville de départ"
                       onValueChange={(value: string) =>
                         setIdVilleDep(parseInt(value))
                       }
-                    >
-                      <SelectTrigger className="text-md text-neutral-600 py-6 px-6">
-                        <SelectValue placeholder="Ville de départ" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Villes</SelectLabel>
-                          {villes?.map((ville: Ville) => (
-                            <SelectItem
-                              key={ville.id}
-                              value={ville.id.toString()}
-                              className="hover:cursor-pointer"
-                            >
-                              {ville.ville + " " + ville.cp}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
+                      className="text-md text-neutral-600 p-6 px-4 w-full"
+                    />
                   </div>
                   <div className="flex justify-center">
-                    <Select
+                    <SelectVille
+                      villes={villes}
+                      placeholder="Ville d'arrivée"
                       onValueChange={(value: string) =>
                         setIdVilleArr(parseInt(value))
                       }
-                    >
-                      <SelectTrigger className="text-md text-neutral-600 py-6 px-6">
-                        <SelectValue placeholder="Ville d'arrivée" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          <SelectLabel>Villes</SelectLabel>
-                          {villes?.map((ville: Ville) => (
-                            <SelectItem
-                              key={ville.id}
-                              value={ville.id.toString()}
-                              className="hover:cursor-pointer"
-                            >
-                              {ville.ville + " " + ville.cp}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
+                      className="text-md text-neutral-600 p-6 px-4 w-full"
+                    />
                   </div>
                   <Input
                     label="Kilomètres"

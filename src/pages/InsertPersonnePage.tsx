@@ -3,18 +3,10 @@ import { Car, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import SelectVille from "@/components/SelectVille";
 import Toast from "@/components/Toast";
 import { Input } from "@/components/input";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { capitalize } from "@/lib/utils";
 import { insertPersonne } from "@/services/apiPersonne";
 import { listeVille } from "@/services/apiVille";
@@ -33,7 +25,7 @@ const InsertPersonnePage = () => {
   const [tel, setTel] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [idVille, setIdVille] = useState<number | null>(null);
-  const [villes, setVilles] = useState<Ville[]>();
+  const [villes, setVilles] = useState<Ville[]>([]);
 
   const token = Cookies.get("token")!;
 
@@ -151,27 +143,12 @@ const InsertPersonnePage = () => {
                 value={tel}
               />
               <div className="flex justify-center">
-                <Select
+                <SelectVille
+                  villes={villes}
+                  placeholder="Choisir une ville"
                   onValueChange={(value: string) => setIdVille(parseInt(value))}
-                >
-                  <SelectTrigger className="text-md text-neutral-600 py-6 px-6">
-                    <SelectValue placeholder="Choisir une ville" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel>Villes</SelectLabel>
-                      {villes?.map((ville: Ville) => (
-                        <SelectItem
-                          key={ville.id}
-                          value={ville.id.toString()}
-                          className="hover:cursor-pointer"
-                        >
-                          {ville.ville + " " + ville.cp}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
+                  className="text-md text-neutral-600 p-6 px-4 md:ml-8 w-full"
+                />
               </div>
             </div>
             <Button
