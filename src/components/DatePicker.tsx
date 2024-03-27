@@ -24,7 +24,7 @@ const DatePicker = ({
         <Button
           variant={"navbarLogo"}
           className={cn(
-            "w-full justify-start text-left font-normal bg-white py-6 text-slate-700",
+            "w-full justify-start text-left font-normal bg-white py-[25px] text-slate-700",
             !date && "text-muted-foreground"
           )}
         >

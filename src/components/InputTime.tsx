@@ -6,6 +6,7 @@ interface InputProps {
   value: string;
   label: string;
   min?: string;
+  classname?: string;
 }
 
 export const InputTime: React.FC<InputProps> = ({
@@ -14,22 +15,15 @@ export const InputTime: React.FC<InputProps> = ({
   value,
   label,
   min,
+  classname,
 }) => {
   return (
     <div
-      className="relative w-full
-    block
-    rounded-md
-    px-6
-    pt-6
-    pb-1
-    text-md
-    text-neutral-900
-    bg-primary-light
-    appearance-none
-    focus:outline-none
-    focus:ring-0
-    peer"
+      className={
+        classname
+          ? classname
+          : "relative w-full block rounded-md px-6 pt-6 pb-1 text-md text-neutral-900 bg-primary-light appearance-none focus:outline-none focus:ring-0 peer"
+      }
     >
       <input
         onChange={onChange}
@@ -53,7 +47,7 @@ export const InputTime: React.FC<InputProps> = ({
             transform
             -translate-y-3
             scale-75
-            top-3.5
+            top-3
             z-10
             origin-[0]
             left-6
