@@ -1,38 +1,40 @@
-import {
-  ArrowRight,
-  Car,
-  CheckCircle,
-  CircleX,
-  Clock,
-  Mail,
-  Phone,
-  User2,
-} from "lucide-react";
+import { ArrowRight, Car, Clock, Mail, Phone, User2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import DatePicker from "@/components/DatePicker";
+import { InputTime } from "@/components/InputTime";
+import SelectVille from "@/components/SelectVille";
+import Toast from "@/components/Toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
-import { toast } from "@/components/ui/use-toast";
 import { capitalize } from "@/lib/utils";
 import { sendEmail } from "@/services/apiBrevo";
 import { insertInscription } from "@/services/apiInscription";
 import { getPersonne } from "@/services/apiPersonne";
 import { getTrajet, listeTrajet } from "@/services/apiTrajet";
+import { listeVille } from "@/services/apiVille";
 import { getToken, removeCookies } from "@/services/authService";
 import { Personne } from "@/types/personne";
 import { DetailTrajet, Trajet } from "@/types/trajet";
+import { Ville } from "@/types/ville";
 
 const RecherchePage = () => {
   const [trajets, setTrajets] = useState<Trajet[]>([]);
+  const [allTrajets, setAllTrajets] = useState<Trajet[]>([]);
   const [currentTrajet, setCurrentTrajet] = useState<DetailTrajet | undefined>(
     undefined
   );
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [isSheetOpen, setIsSheetOpen] = useState(false);
+  const [villes, setVilles] = useState<Ville[]>([]);
+  const [idVilleDep, setIdVilleDep] = useState(0);
+  const [idVilleArr, setIdVilleArr] = useState(0);
+  const [date, setDate] = useState<Date>();
+  const [time, setTime] = useState("");
 
   const navigate = useNavigate();
 
@@ -50,8 +52,6 @@ const RecherchePage = () => {
     const response = await getTrajet({ id, token });
     if ("trajet" in response) {
       setCurrentTrajet(response.trajet);
-    } else {
-      console.error(response.message);
     }
   };
 
@@ -65,83 +65,105 @@ const RecherchePage = () => {
     setMessage("");
     setSubject("");
     setIsSheetOpen(false);
-    toast({
-      description: (
-        <span className="flex items-center">
-          <CheckCircle style={{ color: "green" }} />
-          <p className="pl-4 text-[1rem]">Votre message a bien été envoyé !</p>
-        </span>
-      ),
-      duration: 4000,
-      variant: "success",
-    });
+    Toast(true, "Votre message a bien été envoyé !");
   };
 
   const reserverPlace = async (trajetId: number) => {
     const response = await insertInscription({ id_trajet: trajetId });
     if (response.message != "OK") {
-      toast({
-        description: (
-          <span className="flex items-center">
-            <CircleX style={{ color: "red" }} />
-            <p className="pl-4 text-[1rem]">{response.message}</p>
-          </span>
-        ),
-        duration: 4000,
-        variant: "success",
-      });
+      Toast(false, response.message);
     } else {
-      toast({
-        description: (
-          <span className="flex items-center">
-            <CheckCircle style={{ color: "green" }} />
-            <p className="pl-4 text-[1rem]">
-              Votre réservation a bien été enregistrée !
-            </p>
-          </span>
-        ),
-        duration: 4000,
-        variant: "success",
-      });
+      Toast(true, "Votre réservation a bien été enregistrée !");
       setIsSheetOpen(false);
     }
-    console.log(response);
+  };
+
+  const rechercher = () => {
+    console.log(allTrajets);
+    console.log(idVilleDep, idVilleArr, date, time);
+    setTrajets(
+      allTrajets.filter(
+        (trajet) =>
+          (idVilleDep === 0 || trajet.villeDep.id === idVilleDep) &&
+          (idVilleArr === 0 || trajet.villeArr.id === idVilleArr) &&
+          (!date ||
+            new Date(trajet.dateT).toLocaleDateString("fr-FR") ===
+              date?.toLocaleDateString("fr-FR")) &&
+          (!time || new Date(trajet.dateT).toLocaleTimeString("fr-FR") >= time)
+      )
+    );
   };
 
   useEffect(() => {
+    const fetchVilles = async () => {
+      const response = await listeVille();
+      if ("villes" in response) {
+        const data = await listeVille();
+        data.villes.sort((a: Ville, b: Ville) =>
+          a.ville.localeCompare(b.ville)
+        );
+        setVilles(data.villes);
+      }
+    };
     const fetchTrajets = async () => {
       const token = getToken()!;
       const response = await listeTrajet(token);
       if ("trajets" in response) {
         setTrajets(response.trajets);
+        setAllTrajets(response.trajets);
       } else {
         if (response.message === "Accès non autorisé / Token expiré !") {
-          toast({
-            description: (
-              <span className="flex items-center">
-                <CircleX style={{ color: "red" }} />
-                <p className="pl-4 text-[1rem]">
-                  Session expirée, veuillez vous reconnecter !
-                </p>
-              </span>
-            ),
-            duration: 4000,
-            variant: "success",
-          });
+          Toast(false, "Session expirée, veuillez vous reconnecter !");
           removeCookies();
           navigate("/auth");
         }
-        console.error(response.message);
       }
     };
 
+    fetchVilles();
     fetchTrajets();
   }, [navigate, isSheetOpen]);
 
   return (
     <div className="flex flex-col items-center pb-16 md:pb-0 md:pt-16">
-      {/* filter placeholder */}
-      <div className="bg-slate-800 w-4/5 h-32 mt-8 mb-8"></div>
+      <div className="bg-primary-dark rounded-md flex flex-col w-5/6 max-w-3xl mt-8 mb-8 p-6">
+        <div className="flex mb-4 flex-col md:flex-row items-center">
+          <SelectVille
+            villes={villes}
+            placeholder="Ville de départ"
+            onValueChange={(value: string) => setIdVilleDep(parseInt(value))}
+          />
+          <SelectVille
+            villes={villes}
+            placeholder="Ville d'arrivée"
+            onValueChange={(value: string) => setIdVilleArr(parseInt(value))}
+            className="text-md text-neutral-600 p-6 px-4 md:ml-8 w-full"
+          />
+        </div>
+        <div className="flex flex-col md:flex-row">
+          <DatePicker date={date} setDate={setDate} />
+          <InputTime
+            label="Heure de départ"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setTime(e.target.value)
+            }
+            id="time"
+            value={time}
+            classname="relative w-full block rounded-md px-6 pt-5 pb-1 text-md text-neutral-900 bg-primary-light appearance-none focus:outline-none focus:ring-0 peer md:ml-8 mt-4 md:mt-0"
+          />
+        </div>
+        <div className="flex justify-center">
+          <Button
+            variant={"dark"}
+            onClick={() => {
+              rechercher();
+            }}
+            className="mt-4 w-full md:w-3/5"
+          >
+            Rechercher
+          </Button>
+        </div>
+      </div>
       {trajets.length === 0 && (
         <div className="flex justify-center items-center h-full">
           <p className="text-lg font-semibold">Aucun trajet n'a été trouvé.</p>
@@ -159,7 +181,11 @@ const RecherchePage = () => {
           >
             <div className="absolute -top-3 right-3 bg-indigo-500 rounded-lg">
               <p className="px-2 py-1 text-[0.78rem]">
-                {trajet.place_dispo} places restantes
+                {trajet.place_dispo === 0
+                  ? "complet"
+                  : trajet.place_dispo === 1
+                  ? " 1 place restante"
+                  : trajet.place_dispo + " places restantes"}
               </p>
             </div>
             <div className="px-4 pt-2 pb-3 flex items-center justify-between font-semibold w-full">
