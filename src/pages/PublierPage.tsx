@@ -1,4 +1,3 @@
-import { format } from "date-fns";
 import { CheckCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -229,7 +228,6 @@ const PublierPage = () => {
                     }
                     id="time"
                     value={time}
-                    min={format(new Date(), "HH:mm")}
                   />
                 </div>
                 <Button
