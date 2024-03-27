@@ -14,6 +14,8 @@ const buttonVariants = cva(
         light:
           "bg-primary-light text-slate-800 hover:bg-indigo-600 hover:text-primary-light shadow-lg duration-500",
         dark: "bg-indigo-600 text-primary-light hover:bg-indigo-800 shadow-lg duration-500",
+        delete:
+          "bg-red-600 text-primary-light hover:bg-red-800 shadow-lg duration-500",
         navbarItem:
           "bg-none text-primary-light/60 md:hover:text-primary-light/90 md:hover:bg-primary-light/10 flex flex-col md:flex-row",
         navbarLogo: "bg-none text-primary-light/90 hover:bg-none",
