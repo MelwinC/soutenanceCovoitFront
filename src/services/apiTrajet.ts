@@ -67,3 +67,18 @@ export async function insertTrajet({
   });
   return await response.json();
 }
+
+export async function deleteTrajet(
+  id_trajet: number
+): Promise<{ message: string }> {
+  const token = getToken()!;
+  const response = await fetch(API_URL + "deleteTrajet", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "x-access-token": token,
+    },
+    body: JSON.stringify({ id_trajet }),
+  });
+  return await response.json();
+}

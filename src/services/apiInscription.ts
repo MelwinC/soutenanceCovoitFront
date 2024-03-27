@@ -48,3 +48,28 @@ export async function listeInscription(): Promise<{
   });
   return await response.json();
 }
+
+export async function deleteInscription({
+  id_trajet,
+  id_personne,
+}: {
+  id_trajet: number;
+  id_personne: number;
+}): Promise<{ message: string }> {
+  const token = getToken();
+  if (token === undefined) {
+    return { message: "Erreur token" };
+  }
+  const response = await fetch(API_URL + "deleteInscription", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "x-access-token": token,
+    },
+    body: JSON.stringify({
+      id_trajet,
+      id_personne,
+    }),
+  });
+  return await response.json();
+}
