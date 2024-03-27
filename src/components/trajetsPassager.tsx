@@ -25,10 +25,12 @@ const TrajetsPassager = ({ inscriptions }: { inscriptions: Trajet[] }) => {
   };
 
   return (
-    <div>
+    <>
       {inscriptions.length === 0 && (
-        <div className="flex justify-center items-center h-96">
-          <p className="text-lg font-semibold">Aucun trajet enregistré</p>
+        <div className="flex justify-center items-center h-full">
+          <p className="text-lg font-semibold">
+            Vous êtes inscrit à aucun trajet.
+          </p>
         </div>
       )}
       {inscriptions.map((trajet) => (
@@ -140,7 +142,7 @@ const TrajetsPassager = ({ inscriptions }: { inscriptions: Trajet[] }) => {
           </SheetContent>
         </Sheet>
       ))}
-    </div>
+    </>
   );
 };
 

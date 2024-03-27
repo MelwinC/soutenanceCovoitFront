@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 
-import TrajetsConducteur from "@/components/trajetsConducteur";
-import TrajetsPassager from "@/components/trajetsPassager";
+import TrajetsConducteur from "@/components/TrajetConducteur";
+import TrajetsPassager from "@/components/TrajetsPassager";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { listeInscription } from "@/services/apiInscription";
+import { InscriptionConducteur } from "@/types/inscription";
 import { Trajet } from "@/types/trajet";
 
 const TrajetsPage = () => {
   const [inscriptionsConducteur, setInscriptionsConducteur] = useState<
-    Trajet[]
+    InscriptionConducteur[]
   >([]);
   const [inscriptionsPassager, setInscriptionsPassager] = useState<Trajet[]>(
     []
@@ -17,7 +18,6 @@ const TrajetsPage = () => {
   useEffect(() => {
     const fetchInscriptions = async () => {
       const response = await listeInscription();
-      console.log(response);
       setInscriptionsConducteur(response.inscriptionsConducteur);
       setInscriptionsPassager(response.inscriptionsPassager);
     };
@@ -25,8 +25,8 @@ const TrajetsPage = () => {
   }, []);
 
   return (
-    <div className="md:mt-16 flex flex-col items-center">
-      <Tabs defaultValue="trajets_passager" className="w-10/12">
+    <div className="pb-16 md:pb-0 md:pt-16 flex flex-col items-center h-full">
+      <Tabs defaultValue="trajets_passager" className="w-10/12 h-full">
         <TabsList className="w-full bg-primary-dark py-6 my-8">
           <TabsTrigger
             value="trajets_passager"
