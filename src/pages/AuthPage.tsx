@@ -96,7 +96,7 @@ const AuthPage = () => {
       };
       authentified();
     }
-  }, [compte, navigate, toast]);
+  }, [compte, navigate]);
 
   useEffect(() => {
     setError(null);
