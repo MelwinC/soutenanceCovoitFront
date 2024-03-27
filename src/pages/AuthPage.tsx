@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import Toast from "@/components/Toast";
 import { Input } from "@/components/input";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 import { capitalize } from "@/lib/utils";
 import { signIn, signUp } from "@/services/apiAuth";
 import { getPersonne } from "@/services/apiPersonne";
 import { isLoggedIn, isPersonne, setCookie } from "@/services/authService";
 import { Compte } from "@/types/compte";
-import { Car, CheckCircle } from "lucide-react";
+import { Car } from "lucide-react";
 
 const AuthPage = () => {
   const [pseudo, setPseudo] = useState("");
@@ -20,7 +20,6 @@ const AuthPage = () => {
   const [compte, setCompte] = useState<Compte | null>(null);
 
   const navigate = useNavigate();
-  const { toast } = useToast();
 
   const toggleVariant = useCallback(() => {
     setVariant((currentVariant) =>
@@ -63,23 +62,14 @@ const AuthPage = () => {
         } else if (password !== confirmPassword) {
           setError("Les mots de passe ne correspondent pas !");
         } else {
-          toast({
-            description: (
-              <span className="flex items-center">
-                <CheckCircle style={{ color: "green" }} />
-                <p className="pl-4 text-[1rem]">Compte créé avec succès !</p>
-              </span>
-            ),
-            duration: 1000,
-            variant: "success",
-          });
+          Toast(true, "Compte créé avec succès !");
           login();
         }
       }
     } catch (error) {
       console.log("erreur : " + error);
     }
-  }, [pseudo, password, confirmPassword, login, toast]);
+  }, [pseudo, password, confirmPassword, login]);
 
   useEffect(() => {
     if (isLoggedIn()) return navigate("/");
@@ -91,19 +81,12 @@ const AuthPage = () => {
           if (isPersonne()) {
             const response = await getPersonne();
             if ("personne" in response) {
-              toast({
-                description: (
-                  <span className="flex items-center">
-                    <CheckCircle style={{ color: "green" }} />
-                    <p className="pl-4 text-[1rem]">
-                      Connexion réussie, bienvenue{" "}
-                      {capitalize(response.personne.prenom)} !
-                    </p>
-                  </span>
-                ),
-                duration: 2000,
-                variant: "success",
-              });
+              Toast(
+                true,
+                `Connexion réussie, bienvenue ${capitalize(
+                  response.personne.prenom
+                )} !`
+              );
               return navigate("/");
             }
           } else {

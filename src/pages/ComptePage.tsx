@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 
+import Toast from "@/components/Toast";
 import { Input } from "@/components/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,15 +12,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "@/components/ui/use-toast";
 import { listeMarque } from "@/services/apiMarque";
 import {
   deleteVoiture,
   getProfile,
   updatePersonne,
 } from "@/services/apiPersonne";
+import { removeCookies } from "@/services/authService";
 import { Marque } from "@/types/marque";
-import { CheckCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const ComptePage = () => {
   const [prenom, setPrenom] = useState<string>("");
@@ -33,6 +34,8 @@ const ComptePage = () => {
   const [error, setError] = useState<string | null>(null);
   const [variant, setVariant] = useState("passager");
   const [idVoiture, setIdVoiture] = useState<number | null>(null);
+
+  const navigate = useNavigate();
 
   const marqueUser = marques?.find((marque) => marque.id === idMarque);
 
@@ -59,18 +62,7 @@ const ComptePage = () => {
           place: nbPlaces,
         });
         if (response.message === "OK") {
-          toast({
-            description: (
-              <span className="flex items-center">
-                <CheckCircle style={{ color: "green" }} />
-                <p className="pl-4 text-[1rem]">
-                  Votre profil a bien été mis à jour !
-                </p>
-              </span>
-            ),
-            duration: 3000,
-            variant: "success",
-          });
+          Toast(true, "Votre profil a bien été mis à jour !");
           fetchProfil();
         } else {
           setError("Erreur lors de la mise à jour du profil");
@@ -98,24 +90,18 @@ const ComptePage = () => {
     }
     const response = await deleteVoiture(idVoiture);
     if (response.message === "OK") {
-      toast({
-        description: (
-          <span className="flex items-center">
-            <CheckCircle style={{ color: "green" }} />
-            <p className="pl-4 text-[1rem]">
-              Votre voiture et vos trajets (conducteur) ont bien été supprimés !
-            </p>
-          </span>
-        ),
-        duration: 3000,
-        variant: "success",
-      });
+      Toast(true, "Votre voiture et vos trajets ont bien été supprimés !");
       setIdVoiture(null);
       setModele("");
       setIdMarque(null);
     } else {
       setError("Erreur lors de la suppression de la voiture");
     }
+  };
+
+  const logout = () => {
+    removeCookies();
+    navigate("/auth");
   };
 
   useEffect(() => {
@@ -279,6 +265,7 @@ const ComptePage = () => {
           <Button
             variant={"dark"}
             className="bg-red-600 hover:bg-red-800 text-md w-full mt-4 active:bg-neutral-700 active:duration-300 py-4 md:hidden flex"
+            onClick={() => logout()}
           >
             Déconnexion
           </Button>

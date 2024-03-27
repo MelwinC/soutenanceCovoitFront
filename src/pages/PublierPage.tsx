@@ -1,8 +1,8 @@
-import { CheckCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import DatePicker from "@/components/DatePicker";
 import { InputTime } from "@/components/InputTime";
+import Toast from "@/components/Toast";
 import { Input } from "@/components/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,7 +14,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "@/components/ui/use-toast";
 import { getProfile } from "@/services/apiPersonne";
 import { insertTrajet } from "@/services/apiTrajet";
 import { listeVille } from "@/services/apiVille";
@@ -82,16 +81,7 @@ const PublierPage = () => {
       id_ville_arr: idVilleArr,
     });
     if (response.message === "OK") {
-      toast({
-        description: (
-          <span className="flex items-center">
-            <CheckCircle style={{ color: "green" }} />
-            <p className="pl-4 text-[1rem]">Votre trajet a bien été publié !</p>
-          </span>
-        ),
-        duration: 3000,
-        variant: "success",
-      });
+      Toast(true, "Votre trajet a bien été publié !");
     } else {
       setError("Une erreur est survenue, veuillez réessayer !");
     }

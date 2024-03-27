@@ -14,7 +14,7 @@ const Toast = (success: boolean, description: string) => {
         <p className="pl-4 text-[1rem]">{capitalize(description)}</p>
       </span>
     ),
-    duration: 4000,
+    duration: 3000,
     variant: "success",
   });
 };

@@ -1,8 +1,9 @@
 import Cookies from "js-cookie";
-import { Car, CheckCircle, LogOut } from "lucide-react";
+import { Car, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import Toast from "@/components/Toast";
 import { Input } from "@/components/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,7 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "@/components/ui/use-toast";
 import { capitalize } from "@/lib/utils";
 import { insertPersonne } from "@/services/apiPersonne";
 import { listeVille } from "@/services/apiVille";
@@ -55,18 +55,7 @@ const InsertPersonnePage = () => {
           ? roles + ",personne"
           : "utilisateur,personne";
         Cookies.set("roles", updatedRoles);
-        toast({
-          description: (
-            <span className="flex items-center">
-              <CheckCircle style={{ color: "green" }} />
-              <p className="pl-4 text-[1rem]">
-                Inscription réussie, bienvenue {capitalize(prenom)} !
-              </p>
-            </span>
-          ),
-          duration: 2000,
-          variant: "success",
-        });
+        Toast(true, `Inscription réussie, bienvenue ${capitalize(prenom)} !`);
         navigate("/");
       } else if (data.message === "L'email est déjà attribué !") {
         setError("L'email est déjà attribué !");
