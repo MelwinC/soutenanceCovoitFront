@@ -119,3 +119,18 @@ export async function updatePersonne({
   });
   return await response.json();
 }
+
+export async function deleteVoiture(
+  id_voiture: number
+): Promise<{ message: string }> {
+  const token = getToken()!;
+  const response = await fetch(API_URL + "deleteVoiture", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      "x-access-token": token,
+    },
+    body: JSON.stringify({ id_voiture }),
+  });
+  return await response.json();
+}

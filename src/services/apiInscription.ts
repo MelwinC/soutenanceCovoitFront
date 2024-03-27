@@ -1,3 +1,4 @@
+import { InscriptionConducteur } from "@/types/inscription";
 import { Trajet } from "@/types/trajet";
 import { getPersonne } from "./apiPersonne";
 import { getToken } from "./authService";
@@ -34,7 +35,7 @@ export async function insertInscription({
 
 export async function listeInscription(): Promise<{
   message: string;
-  inscriptionsConducteur: Trajet[];
+  inscriptionsConducteur: InscriptionConducteur[];
   inscriptionsPassager: Trajet[];
 }> {
   const token = getToken()!;
